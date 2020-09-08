@@ -2815,7 +2815,7 @@ def TC_tracker():
     pickle.dump(track_struct, open(track_struct_path, 'wb'))
     wrt_txt(track_struct['final_tracklet_mat'])
     draw_result(img_folder, tracking_img_folder)
-    convert_frames_to_video(tracking_img_folder + '/', tracking_video_path, 10)
+    # convert_frames_to_video(tracking_img_folder + '/', tracking_video_path, 10)
 
     return track_struct
 
