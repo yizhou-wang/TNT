@@ -46,23 +46,23 @@ tracklet_classify_flag = 0
 # ROI path
 ROI_path = os.path.join(data_root, split + '_ROIs', c_name + '.png')
 # Detection path
-det_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/test/' + s_name + '/' + c_name + '/det/det_mask_rcnn.txt'
+det_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/' + split + '/' + s_name + '/' + c_name + '/det/det_mask_rcnn.txt'
 gt_path = ''
 # Testing image path
-img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/test/' + s_name + '/' + c_name + '/images'
+img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/' + split + '/' + s_name + '/' + c_name + '/images'
 # Cropped detection results
-crop_det_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/test_crop_det/' + c_name
+crop_det_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_crop_det/' + c_name
 triplet_model = '/mnt/disk1/AICity19/aic19-track1-mtmc/models/triplet_model/AI_city_model'
 seq_model = '/mnt/disk1/AICity19/aic19-track1-mtmc/models/seq_model/MOT_2d_v2_new/model.ckpt'
 
 # Tracking image output
-tracking_img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/tracking_img/' + c_name
+tracking_img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'tracking_img/' + c_name
 # Tracking video output
-tracking_video_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/tracking_video/' + c_name + '.avi'
-appear_mat_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/appear_mat/' + c_name + '.obj'
+tracking_video_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'tracking_video/' + c_name + '.avi'
+appear_mat_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'appear_mat/' + c_name + '.obj'
 # Tracking txt results
-txt_result_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/txt_result/' + c_name + '.txt'
-track_struct_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/track_struct/' + c_name + '.obj'
+txt_result_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'txt_result/' + c_name + '.txt'
+track_struct_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'track_struct/' + c_name + '.obj'
 
 max_length = 64
 feature_size = 4 + 512
