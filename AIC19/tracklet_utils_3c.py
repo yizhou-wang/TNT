@@ -38,8 +38,8 @@ import track_lib
 
 data_root = '/mnt/disk1/AICity19/aic19-track1-mtmc'
 split = 'test'
-s_name = 'S05'
-c_name = 'c024'
+s_name = 'S02'
+c_name = 'c009'
 file_len = 6
 tracklet_classify_flag = 0
 
@@ -56,13 +56,13 @@ triplet_model = '/mnt/disk1/AICity19/aic19-track1-mtmc/models/triplet_model/AI_c
 seq_model = '/mnt/disk1/AICity19/aic19-track1-mtmc/models/seq_model/MOT_2d_v2_new/model.ckpt'
 
 # Tracking image output
-tracking_img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'tracking_img/' + c_name
+tracking_img_folder = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_tracking_img/' + c_name
 # Tracking video output
-tracking_video_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'tracking_video/' + c_name + '.avi'
-appear_mat_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'appear_mat/' + c_name + '.obj'
+tracking_video_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_tracking_video/' + c_name + '.avi'
+appear_mat_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_appear_mat/' + c_name + '.obj'
 # Tracking txt results
-txt_result_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'txt_result/' + c_name + '.txt'
-track_struct_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + 'track_struct/' + c_name + '.obj'
+txt_result_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_txt_result/' + c_name + '.txt'
+track_struct_path = '/mnt/disk1/AICity19/aic19-track1-mtmc/tnt/' + split + '_track_struct/' + c_name + '.obj'
 
 max_length = 64
 feature_size = 4 + 512
