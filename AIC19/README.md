@@ -38,12 +38,10 @@ python pre-process/preprocess.py --gt_folder <DATA_ROOT>/train_gt/ \
 2. Validate data
 ```
 python src/validate_on_lfw.py <DATA_ROOT>/train_crop/ \
-    <DATA_ROOT>/models/triplet_model/AI_city_model/ 
-    --lfw_pairs <DATA_ROOT>/train_valid_pairs/pairs.txt 
-    --distance_metric 0 
-    --use_flipped_images 
-    --subtract_mean 
-    --use_fixed_image_standardization
+    <DATA_ROOT>/models/triplet_model/AI_city_model/ \
+    --lfw_pairs <DATA_ROOT>/train_valid_pairs/pairs.txt \
+    --distance_metric 0 --use_flipped_images \
+    --subtract_mean --use_fixed_image_standardization
 ```
 
 3. Train FaceNet triplet loss
@@ -55,7 +53,7 @@ python src/train_tripletloss.py --logs_base_dir <DATA_ROOT>/models/aicity19_new/
     --lfw_pairs <DATA_ROOT>/train_valid_pairs/pairs.txt \
     --image_size 160 --model_def models.inception_resnet_v1 \
     --optimizer RMSPROP --weight_decay 1e-4 --max_nrof_epochs 500 \
-    --embedding_size 512 --batch_size 30 --people_per_batch 15 
+    --embedding_size 512 --batch_size 30 --people_per_batch 15 \
     --images_per_person 10 --epoch_size 100 --learning_rate 0.0001
 ```
 
