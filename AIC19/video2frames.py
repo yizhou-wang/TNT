@@ -1,8 +1,8 @@
 import cv2
 import os
 
-split = 'test'
-data_root = '/mnt/disk1/AICity19/aic19-track1-mtmc'
+split = 'train'
+data_root = '/mnt/disk2/AIC19/aic19-track1-mtmc'
 s_list = os.listdir(os.path.join(data_root, split))
 
 for s_id in s_list:
@@ -13,7 +13,7 @@ for s_id in s_list:
         cam = cv2.VideoCapture(video_path)
 
         # creating a folder named data
-        images_path = os.path.join(data_root, split, s_id, c_id, 'images')
+        images_path = os.path.join(data_root, split + '_images', c_id)
         if not os.path.exists(images_path):
             os.makedirs(images_path)
 
