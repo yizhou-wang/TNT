@@ -97,7 +97,7 @@ def crop_UA_Detrac(gt_path, seq_name, img_folder, img_ext, save_folder):
     W = gt_info['W']
     H = gt_info['H']
     img_list = []
-    for img_file in os.listdir(img_folder):
+    for img_file in sorted(os.listdir(img_folder)):
         if img_file.endswith(img_ext):
             img_list.append(img_file)
 
@@ -107,7 +107,7 @@ def crop_UA_Detrac(gt_path, seq_name, img_folder, img_ext, save_folder):
         img = np.array(cv2.imread(img_path))
         img_size = img.shape
         num_id = H.shape[1]
-        if m > gt_info['H'].shape[0]:
+        if m >= gt_info['H'].shape[0]:
             continue
         for k in range(num_id):
             if gt_info['H'][m, k] < 1:
@@ -135,14 +135,14 @@ def crop_UA_Detrac(gt_path, seq_name, img_folder, img_ext, save_folder):
 
 
 def create_pair(dataset_dir, save_file, num_pair=None, n_fold=None):
-    class_list = os.listdir(dataset_dir)
+    class_list = sorted(os.listdir(dataset_dir))
     class_num = len(class_list)
     instance_num = np.zeros((1, class_num))
 
     for n in range(class_num):
         temp_dir = os.path.join(dataset_dir, class_list[n])
         sub_list = []
-        for file in os.listdir(temp_dir):
+        for file in sorted(os.listdir(temp_dir)):
             if file.endswith('.png'):
                 sub_list.append(file)
         instance_num[:, n] = len(sub_list)
@@ -159,7 +159,7 @@ def create_pair(dataset_dir, save_file, num_pair=None, n_fold=None):
                         rand_class = np.random.randint(class_num)
                         class_name = class_list[rand_class]
                         img_list = []
-                        for file in os.listdir(os.path.join(dataset_dir, class_name)):
+                        for file in sorted(os.listdir(os.path.join(dataset_dir, class_name))):
                             if file.endswith('.png'):
                                 img_list.append(file)
                         temp_num = int(instance_num[:, rand_class])
@@ -177,13 +177,13 @@ def create_pair(dataset_dir, save_file, num_pair=None, n_fold=None):
                 class_name2 = class_list[rand_class[1]]
                 choose_idx1 = np.random.permutation(int(instance_num[:, rand_class[0]]))[0]
                 choose_idx2 = np.random.permutation(int(instance_num[:, rand_class[1]]))[0]
-                img_list1 = os.listdir(os.path.join(dataset_dir, class_name1))
-                img_list2 = os.listdir(os.path.join(dataset_dir, class_name2))
+                img_list1 = sorted(os.listdir(os.path.join(dataset_dir, class_name1)))
+                img_list2 = sorted(os.listdir(os.path.join(dataset_dir, class_name2)))
                 temp_name1 = img_list1[choose_idx1]
                 temp_name2 = img_list2[choose_idx2]
                 idx1 = int(temp_name1[:-4].split('_')[-1])
                 idx2 = int(temp_name2[:-4].split('_')[-1])
-                g.write("%s %d %d\n" % (class_name1, idx1, idx2))
+                g.write("%s %d %s %d\n" % (class_name1, idx1, class_name2, idx2))
 
 
 def argument_parser():
@@ -211,7 +211,7 @@ def main():
     args = argument_parser()
     assert os.path.isdir(args.gt_folder)
     assert os.path.isdir(args.img_folder)
-    seq_list = os.listdir(args.gt_folder)
+    seq_list = sorted(os.listdir(args.gt_folder))
 
     if not os.path.exists(args.save_folder):
         os.makedirs(args.save_folder)
@@ -224,8 +224,9 @@ def main():
     print("1st_step: converting MOT to UA Detrac format")
     for i in range(len(seq_list)):
         name = seq_list[i]
+        print(name)
         seq_folder = os.path.join(args.img_folder, name[:-4])
-        name_list = os.listdir(seq_folder)
+        name_list = sorted(os.listdir(seq_folder))
         img = cv2.imread(os.path.join(seq_folder, name_list[0]))
         h = img.shape[0]
         w = img.shape[1]
@@ -235,10 +236,11 @@ def main():
 
     # crop_UA_Detrac
     print("2nd_step: crop images")
-    file_list = os.listdir(args.save_folder)
+    file_list = sorted(os.listdir(args.save_folder))
     for i in range(len(file_list)):
         name = file_list[i]
         gt_path = os.path.join(args.save_folder, name)
+        print(gt_path)
         seq_name = name[:-4]
         img_file_folder = os.path.join(args.img_folder, seq_name)
         img_ext = '.jpg'
@@ -248,7 +250,7 @@ def main():
     # create_pair
     print("3rd_step: create pairs")
     valid_file = os.path.join(args.valid_pairs_folder, 'pairs.txt')
-    create_pair(args.crop_folder, valid_file, 10, 300)
+    create_pair(args.crop_folder, valid_file, 300, 10)
     print("3rd_step Done.")
 
 
