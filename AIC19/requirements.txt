@@ -74,6 +74,7 @@ scikit-image=0.16.2=py36h0573a6f_0
 scikit-learn=0.20.3=py36hd81dba3_0
 scipy=1.1.0=py36h7c811a0_2
 setuptools=49.6.0=py36_0
+shapely=1.7.1=py36h98ec03d_0
 sip=4.19.8=py36hf484d3e_0
 six=1.15.0=py_0
 sqlite=3.33.0=h62c20be_0
