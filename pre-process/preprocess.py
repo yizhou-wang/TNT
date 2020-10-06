@@ -86,6 +86,79 @@ def MOT_to_UA_Detrac(gt_file, seq_name, save_folder, img_size):
     pickle.dump(gt_info, f)
 
 
+def MOT_to_UA_Detrac_aic18(gt_file, seq_name, save_folder, img_size):
+    data = np.loadtxt(gt_file, delimiter=',', dtype=np.float)
+    data = data[:, :8].astype(np.int64)
+    M = data[:, :9]
+    max_fr = np.max(data[:, 0])
+    uniq_ids = np.unique(data[:, 1])
+    # print(uniq_ids)
+    for n in range(len(uniq_ids)):
+        index = np.where(data[:, 1] == uniq_ids[n])
+        M[:, 1][index] = n + 1
+    max_id = len(uniq_ids)
+    X = np.zeros(max_fr * max_id)
+    Y = np.zeros(max_fr * max_id)
+    W = np.zeros(max_fr * max_id)
+    H = np.zeros(max_fr * max_id)
+    X[M[:, 0] + (M[:, 1] - 1) * max_fr - 1] = M[:, 2]
+    Y[M[:, 0] + (M[:, 1] - 1) * max_fr - 1] = M[:, 3]
+    W[M[:, 0] + (M[:, 1] - 1) * max_fr - 1] = M[:, 4]
+    H[M[:, 0] + (M[:, 1] - 1) * max_fr - 1] = M[:, 5]
+    X = np.transpose(X.reshape(max_id, max_fr))
+    Y = np.transpose(Y.reshape(max_id, max_fr))
+    W = np.transpose(W.reshape(max_id, max_fr))
+    H = np.transpose(H.reshape(max_id, max_fr))
+
+    gt_info = {}
+    gt_info['X'] = X
+    gt_info['Y'] = Y
+    gt_info['W'] = W
+    gt_info['H'] = H
+
+    # visibility
+    V = np.zeros_like(W)
+    for n in range(W.shape[0]):
+        index = np.where(W[n, :] != 0)[0]
+        if len(index) <= 1:
+            V[n, index] = 1
+            continue
+        bbox = np.zeros((len(index), 4))
+        bbox[:, 0] = X[n, index].T
+        bbox[:, 1] = Y[n, index].T
+        bbox[:, 2] = W[n, index].T
+        bbox[:, 3] = H[n, index].T
+        overlap_ratio = np.zeros((len(bbox), len(bbox)))
+
+        for i in range(len(bbox)):
+            boxA = deepcopy(bbox[i, :])
+            boxA[2] = bbox[i, 0] + bbox[i, 2]
+            boxA[3] = bbox[i, 1] + bbox[i, 3]
+            for j in range(len(bbox)):
+                boxB = deepcopy(bbox[j, :])
+                boxB[2] = bbox[j, 0] + bbox[j, 2]
+                boxB[3] = bbox[j, 1] + bbox[j, 3]
+
+                box1 = [[boxA[0], boxA[1]], [boxA[2], boxA[1]], [boxA[2], boxA[3]], [boxA[0], boxA[3]]]
+                box2 = [[boxB[0], boxB[1]], [boxB[2], boxB[1]], [boxB[2], boxB[3]], [boxB[0], boxB[3]]]
+
+                iou = bbox_overlap_ratio(box1, box2)
+                overlap_ratio[i, j] = iou
+
+        for k in range(len(index)):
+            overlap_ratio[k, k] = 0
+
+        max_overlap = np.max(overlap_ratio, axis=1)
+        V[n, index] = 1 - max_overlap
+
+    gt_info['V'] = V
+    gt_info['img_size'] = img_size
+
+    save_path = os.path.join(save_folder, seq_name + '.pkl')
+    f = open(save_path, 'wb')
+    pickle.dump(gt_info, f)
+
+
 def crop_UA_Detrac(gt_path, seq_name, img_folder, img_ext, save_folder):
     f = open(gt_path, 'rb')
     gt_info = pickle.load(f)
@@ -231,7 +304,7 @@ def main():
         h = img.shape[0]
         w = img.shape[1]
         img_size = [w, h]
-        MOT_to_UA_Detrac(os.path.join(args.gt_folder, name), name[:-4], args.save_folder, img_size)
+        MOT_to_UA_Detrac_aic18(os.path.join(args.gt_folder, name), name[:-4], args.save_folder, img_size)
     print("1st_step Done.")
 
     # crop_UA_Detrac
