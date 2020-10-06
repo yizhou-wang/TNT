@@ -270,7 +270,7 @@ def split_track(X_2d, Y_2d, W_2d, H_2d, V_2d, img_size, obj_id, noise_scale, con
             if k == end_fr and len(bbox) != 0:
                 bbox_tracklet.append(np.array(bbox))
                 # bbox_num.append(len(bbox))
-        else:
+        else:  # random split trajectory
             if len(bbox) != 0:
                 bbox_tracklet.append(np.array(bbox))
                 # bbox_num.append(len(bbox))
@@ -333,7 +333,7 @@ def generate_data(feature_size, max_length, batch_size, MAT_folder, img_folder):
 
     # positive 
     for n in range(int(batch_size / 2)):
-        # print(n)
+        print('positive', n, Mat_paths[choose_idx[n]], Mat_files[n]['gtInfo']['X'].shape)
         fr_num = Mat_files[n]['gtInfo']['X'].shape[0]
         id_num = Mat_files[n]['gtInfo']['X'].shape[1]
         Y[n, 0] = 1
@@ -456,6 +456,7 @@ def generate_data(feature_size, max_length, batch_size, MAT_folder, img_folder):
 
     # negative
     for n in range(int(batch_size / 2), batch_size):
+        print('negative', n, Mat_paths[choose_idx[n]], Mat_files[n]['gtInfo']['X'].shape)
         fr_num = Mat_files[n]['gtInfo']['X'].shape[0]
         id_num = Mat_files[n]['gtInfo']['X'].shape[1]
         Y[n, 1] = 1
@@ -488,7 +489,7 @@ def generate_data(feature_size, max_length, batch_size, MAT_folder, img_folder):
             for n2 in range(n1 + 1, id_num):
                 cand_fr1 = np.where(W_2d[:, n1] > 0)[0]
                 cand_fr2 = np.where(W_2d[:, n2] > 0)[0]
-                if max(cand_fr1[0], cand_fr2[0]) < min(cand_fr1[-1], cand_fr2[-1]):
+                if max(cand_fr1[0], cand_fr2[0]) < min(cand_fr1[-1], cand_fr2[-1]):  # cand_fr1 and cand_fr2 are overlapped
                     cand_idx_pairs.append([n1, n2])
                     # pair_mat[n1,n2] = 1
 
@@ -605,14 +606,15 @@ def generate_data(feature_size, max_length, batch_size, MAT_folder, img_folder):
             break
 
     # crop data to a temp folder
+    print('cropping data to tmp folder ...')
     if not os.path.exists(temp_folder):
         os.makedirs(temp_folder)
     all_paths = []
     for n in range(batch_size):
         temp_all_path = []
         seq_name = Mat_paths[choose_idx[n]][:-4]
-        img_path = img_folder + '/' + seq_name + '/img1/'
-        # img_path = img_folder+'/'+seq_name+'/'
+        # img_path = img_folder + '/' + seq_name + '/img1/'
+        img_path = img_folder + '/' + seq_name + '/'
         track_name = file_name(n + 1, 4)
         save_path = temp_folder + '/' + track_name
         if not os.path.exists(save_path):
@@ -629,6 +631,7 @@ def generate_data(feature_size, max_length, batch_size, MAT_folder, img_folder):
             scipy.misc.imsave(bbox_img_path, bbox_img)
         all_paths.append(temp_all_path)
 
+    print('start training ...')
     f_image_size = 160
     distance_metric = 0
     with tf.Graph().as_default():
@@ -703,14 +706,16 @@ saver = tf.train.Saver()
 with tf.Session() as sess:
     sess.run(init)
 
-    if os.path.isfile(save_dir + '.meta') == True:
+    if os.path.isfile(save_dir + '.meta'):
         saver.restore(sess, save_dir)
         print("Model restored.")
 
     cnt = 0
     for i in range(2000000):
+        print('generate_data: i =', i)
         total_batch_x, total_batch_y = generate_data(feature_size, max_length, batch_size * 10, MAT_folder, img_folder)
         total_batch_x = interp_batch(total_batch_x)
+        print('end generate_data')
 
         # delete temp folder
         shutil.rmtree(temp_folder)
